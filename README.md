@@ -911,14 +911,14 @@ Usually initialization logic sets up:
 
 ## FAQ
 
-**Can it be used in production?**
+### Can it be used in production?
 
 Not yet.
 
 Right now it's more like public beta so breaking changes still may
 appear based on initial feedback.
 
-**Does it support server-side rendering?**
+### Does it support server-side rendering?
 
 Not yet.
 
@@ -929,7 +929,7 @@ penalties and code quality deterioration.
 If you know how to make it possible without mentioned drawbacks
  feel free to tell us.
 
-**Are there UI kits for it?**
+### Are there UI kits for it?
 
 Not yet.
 
@@ -940,7 +940,7 @@ If you plan to implement your own UI kit we recommend to try to make
 it in a framework-agnostic way so it could be used without any
 framework or with any other framework that doesn't hide DOM access.
 
-**Isn't it just a [Marionette.js](https://marionettejs.com/) clone?**
+### Isn't it just a [Marionette.js](https://marionettejs.com/) clone?
 
 Well, it is. But at least it doesn't depend on Backbone/Underscore/JQuery
 and written in TypeScript that's much more suitable for SPA development.
