@@ -1,4 +1,4 @@
-# Old Scull Framework
+# Old Skull Framework
 
 New front-end framework for old software developers. 🧙‍♂️
 
@@ -49,7 +49,7 @@ Somehow modern front-end frameworks don't offer that. Instead they:
 
 - Replace successful well-known paradigms with [weird and unobvious one](https://reactjs.org/docs/hooks-intro.html)
 
-I think all of that is unnecessary and "Old Scull Framework" is developed to prove it.
+I think all of that is unnecessary and "Old Skull Framework" is developed to prove it.
 
 ## Overview
 
@@ -221,7 +221,7 @@ and a few others that allow you to:
 See also:
 
 - [Benchmark results](https://krausest.github.io/js-framework-benchmark/index.html)
-- [Application example](https://github.com/alexeyoganezov/oldscull-realworld) (WIP)
+- [Application example](https://github.com/alexeyoganezov/oldskull-realworld) (WIP)
 
 ## Installation
 
@@ -229,7 +229,7 @@ yarn: `yarn add oldskull`
 
 npm: `npm install oldskull --save`
 
-It's highly recommended to import all the `oldscull` entities inside of
+It's highly recommended to import all the `oldskull` entities inside of
 your project and re-export them for internal use:
 
 ```typescript
@@ -260,7 +260,7 @@ import {
   MODEL_ADDED_EVENT,
   MODEL_REMOVED_EVENT,
   COLLECTION_RESETED_EVENT,
-} from 'oldscull';
+} from 'oldskull';
 
 export {
   OsfRenderable as Renderable,
@@ -322,7 +322,7 @@ mailbox.on(NEW_LETTER, (data: unknown) => {
 });
 ```
 
-Almost all `oldscull` classes already extend `OsfObservable` and able to trigger events.
+Almost all `oldskull` classes already extend `OsfObservable` and able to trigger events.
 
 An event can be triggered with or without a payload of any type:
 
@@ -418,7 +418,7 @@ myView.remove();
 To define a desired DOM structure implement `getHTML()` method returning HTML string:
 
 ```typescript
-import { OsfView } from 'oldscull';
+import { OsfView } from 'oldskull';
 
 class GreetingView extends OsfView {
   getHTML() {
@@ -559,7 +559,7 @@ Instead of writing `'change'` string each time you can use
 `MODEL_CHANGED_EVENT` variable with the same value:
 
 ```typescript
-import { MODEL_CHANGED_EVENT } from 'oldscull';
+import { MODEL_CHANGED_EVENT } from 'oldskull';
 
 taskModel.on(MODEL_CHANGED_EVENT, (data: unknown) => {
   // ...
@@ -706,7 +706,7 @@ inside of it renders Models from a Collection using provided
 "EmptyView" is rendered instead.
 
 ```typescript
-import { OsfCollectionView } from 'oldscull';
+import { OsfCollectionView } from 'oldskull';
 
 class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
   constructor(collection: OsfCollection<TaskModel>) {
@@ -883,7 +883,7 @@ Region itself provides only two methods:
 `OsfApplication` is a skaffold for an application entry point.
 
 ```typescript
-import { OsfApplication } from 'oldscull';
+import { OsfApplication } from 'oldskull';
 
 export class MyApp extends OsfApplication {
   async init() {
@@ -899,8 +899,8 @@ It creates a `mainRegion` on the Element found by provided CSS selector
 and expects you to implement `init()` method that performs application start.
 
 For more thorough example see
-[index.ts](https://github.com/alexeyoganezov/oldscull-realworld/blob/master/src/index.ts) from
-[oldscull-realworld](https://github.com/alexeyoganezov/oldscull-realworld).
+[index.ts](https://github.com/alexeyoganezov/oldskull-realworld/blob/master/src/index.ts) from
+[oldskull-realworld](https://github.com/alexeyoganezov/oldskull-realworld).
 
 Usually initialization logic sets up:
 
