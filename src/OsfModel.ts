@@ -43,20 +43,19 @@ export class OsfModel<T extends object> extends OsfObservable implements IOsfMod
    * Set values on data object and trigger change event if necessary.
    *
    * @param attributes - values to set
-   * @param suppressChangeEvent - prevent change event triggering
    */
-  public set(attributes: T, suppressChangeEvent = false): void {
+  public set(attributes: T): void {
     let wasObjectChanged = false;
     Object.keys(attributes).forEach((key) => {
       const wasAttrChanged = this.setAttribute(
         <keyof T>key, attributes[<keyof T>key],
-        suppressChangeEvent,
+        true,
       );
       if (wasAttrChanged) {
         wasObjectChanged = true;
       }
     });
-    if (wasObjectChanged && !suppressChangeEvent) {
+    if (wasObjectChanged) {
       this.trigger(MODEL_CHANGED_EVENT, this);
     }
   }
@@ -66,7 +65,7 @@ export class OsfModel<T extends object> extends OsfObservable implements IOsfMod
    *
    * @param attributeName - name of an attribute
    * @param attributeValue - value of an attribute to set
-   * @param suppressChangeEvent - prevent change event triggering
+   * @param suppressChangeEvent - prevent model change event triggering
    *
    * @returns was attribute value changed
    */
@@ -80,8 +79,9 @@ export class OsfModel<T extends object> extends OsfObservable implements IOsfMod
       return false;
     }
     this.attrs[attributeName] = attributeValue;
+    this.trigger(`${MODEL_CHANGED_EVENT} ${attributeName}`, this);
     if (!suppressChangeEvent) {
-      this.trigger(`${MODEL_CHANGED_EVENT} ${attributeName}`, this);
+      this.trigger(MODEL_CHANGED_EVENT, this);
     }
     return true;
   }
