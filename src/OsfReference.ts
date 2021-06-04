@@ -3,11 +3,11 @@ import { IOsfRenderable } from './internal';
 /**
  * Discovers HTML element in provided View and keeps a reference to it.
  */
-export class OsfReference {
+export class OsfReference<T extends Element> {
   /**
    * Discovered HTML element
    */
-  protected el?: Element;
+  protected el: T | null = null;
 
   /**
    * A View containing necessary element
@@ -32,7 +32,7 @@ export class OsfReference {
    * Discover HTML element and save a reference to it.
    */
   protected init(): void {
-    const el = this.parent.el?.querySelector(this.selector);
+    const el = this.parent.el?.querySelector<T>(this.selector);
     if (el) {
       this.el = el;
     } else {
@@ -45,7 +45,7 @@ export class OsfReference {
    *
    * @returns HTML element specified by this.selector
    */
-  public get(): Element | undefined {
+  public get(): T | null {
     if (!this.el) {
       this.init();
     }

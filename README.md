@@ -828,7 +828,7 @@ class LayoutView extends OsfView {
       </div>
     `;
   }
-  content = new OsfReference(this, '.content');
+  content = new OsfReference<HTMLElement>(this, '.content');
   afterInit() {
     const contentEl = this.content.get();
     contentEl.classList.add('loaded');
@@ -836,8 +836,9 @@ class LayoutView extends OsfView {
 }
 ```
 
-To create a Reference we just pass a View and a CSS selector of the
-needed Element to the Reference constructor.
+To create a Reference just pass a View and a CSS selector of the
+needed element to the constructor and specify referenced element type
+in generic.
 
 Actual Element can be obtained by `get()` call.
 
