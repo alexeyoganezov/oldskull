@@ -1,5 +1,6 @@
 import {
   OsfView,
+  IOsfReference,
   IOsfEventListener,
   IOsfModel,
   IOsfModelView,
@@ -44,6 +45,12 @@ export abstract class OsfCollectionView<
    * Rendered ModelViews.
    */
   protected children: CV[] = [];
+
+  /**
+   * Optional Reference to a child Element where
+   * child Views should be added.
+   */
+  protected childViewContainer?: IOsfReference<Element>;
 
   /**
    * A list of Collection events and their handlers.
@@ -140,12 +147,17 @@ export abstract class OsfCollectionView<
       const htmls = await Promise.all(promises);
       const html = htmls.join('');
       if (this.el) {
-        this.el.insertAdjacentHTML('beforeend', html);
-        const lastChildIndex = this.children.length;
-        for (let i = offset; i < lastChildIndex; i += 1) {
-          const childView = this.children[i];
-          childView.mountTo(this.el.children[i]);
-          this.subscribeToView(childView);
+        const container = this.childViewContainer ? this.childViewContainer.get() : this.el;
+        if (container) {
+          container.insertAdjacentHTML('beforeend', html);
+          const lastChildIndex = this.children.length;
+          for (let i = offset; i < lastChildIndex; i += 1) {
+            const childView = this.children[i];
+            childView.mountTo(this.el.children[i]);
+            this.subscribeToView(childView);
+          }
+        } else {
+          throw new Error('[OSF] Container element was not found');
         }
       } else {
         throw new Error('[OSF] Cannot add child view without this.el set');
@@ -155,8 +167,9 @@ export abstract class OsfCollectionView<
       this.subscribeToView(view);
       await view.init();
       this.children.push(view);
-      if (this.el && view.el) {
-        this.el.append(view.el);
+      const container = this.childViewContainer ? this.childViewContainer.get() : this.el;
+      if (container && view.el) {
+        container.append(view.el);
       }
     }
   }

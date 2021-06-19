@@ -6,6 +6,7 @@ import {
   OsfModel,
   OsfView,
   OsfCollection,
+  OsfReference,
   MODEL_ADDED_EVENT,
 } from './index';
 
@@ -212,6 +213,37 @@ test('OsfCollectionView can be used without EmptyView', async () => {
   const view = new ArticlesView(collection, ArticleView);
   await view.init();
   expect(view.el?.children.length).toBe(0);
+});
+
+test('OsfCollectionView can render View inside of child Element', async () => {
+  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
+    getHTML(): string {
+      return `
+        <div class="articles">
+          <p>Before</p>
+          <div class="actual-list"></div>
+          <p>After</p>
+        </div>
+      `;
+    }
+    childViewContainer = new OsfReference(this, '.actual-list');
+  }
+  const collection = new OsfCollection([
+    new ArticleModel({ title: 'One', description: 'Hello' }),
+    new ArticleModel({ title: 'Two', description: 'World' }),
+  ]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  // First view
+  expect(view.el?.children[1].children[0].children[0].tagName).toBe('H1');
+  expect(view.el?.children[1].children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[1].children[0].children[1].tagName).toBe('P');
+  expect(view.el?.children[1].children[0].children[1].textContent).toBe('Hello');
+  // Second view
+  expect(view.el?.children[1].children[1].children[0].tagName).toBe('H1');
+  expect(view.el?.children[1].children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[1].children[1].children[1].tagName).toBe('P');
+  expect(view.el?.children[1].children[1].children[1].textContent).toBe('World');
 });
 
 test.todo('OsfCollectionView can add ModelView');

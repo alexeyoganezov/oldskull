@@ -1,9 +1,13 @@
 import { IOsfRenderable } from './internal';
 
+export interface IOsfReference<T extends Element> {
+  get(): T | null
+}
+
 /**
  * Discovers HTML element in provided View and keeps a reference to it.
  */
-export class OsfReference<T extends Element> {
+export class OsfReference<T extends Element> implements IOsfReference<T> {
   /**
    * Discovered HTML element
    */

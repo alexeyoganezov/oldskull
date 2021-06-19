@@ -756,6 +756,28 @@ class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
 }
 ```
 
+ModelViews can be rendered inside of specified child element instead of
+root element by using `OsfReference`:
+
+```typescript
+class TaskListView extends OsfCollectionView<TaskModel, TaskView> {
+  // ...
+  getHTML(): string {
+    return `
+      <div class="tasks">
+        <h2>
+          Tasks
+        </h2>
+        <div class="task-list">
+
+        </div>
+      </div>
+    `;
+  }
+  childViewContainer = new OsfReference(this, '.task-list');
+}
+```
+
 CollectionView can listen to events from a Collection and child Views:
 
 ```typescript
