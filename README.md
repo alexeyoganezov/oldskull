@@ -396,19 +396,19 @@ By default all hooks methods does nothing and meant to be overwritten by child c
 ```typescript
 class MyView extends View {
   // ...
-  beforeInit() {
+  async beforeInit() {
     // right before this.el creation and initialization
   }
-  afterInit() {
+  async afterInit() {
     // right after this.el creation and initialization
   }
   addOpacity() {
     this.el?.style.opacity = 0.5;
   }
-  beforeRemove() {
+  async beforeRemove() {
     // right before this.el removed
   }
-  afterRemove() {
+  async afterRemove() {
     // right after this.el removed
   }
 }
