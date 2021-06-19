@@ -2,6 +2,7 @@
 
 ## 2.0.0 (unreleased)
 
+- View: allowed to set DOM event handlers on a root element
 - CollectionView: added default implementation for "getHTML()" method returning simple "div" element
 - CollectionView: allowed not to specify EmptyView when it's not used
 - Documentation: improve example usage of "OsfObservable.retrigger()" method

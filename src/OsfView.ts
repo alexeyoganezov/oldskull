@@ -4,7 +4,7 @@ import {
 } from './internal';
 
 export interface IOsfDomEventListener {
-  el: string
+  el?: string
   on: string
   call: EventListenerOrEventListenerObject
 }
@@ -74,14 +74,18 @@ export abstract class OsfView extends OsfRenderable implements IOsfView {
   protected initDomEvents(): void {
     this.domEvents.forEach((event) => {
       if (this.el) {
-        const listeners = this.el.querySelectorAll(event.el);
-        if (listeners.length > 0) {
-          listeners.forEach((listener: HTMLElement | Node) => {
-            listener.addEventListener(event.on, event.call);
-          });
+        if (event.el) {
+          const listeners = this.el.querySelectorAll(event.el);
+          if (listeners.length > 0) {
+            listeners.forEach((listener: HTMLElement | Node) => {
+              listener.addEventListener(event.on, event.call);
+            });
+          }
+        } else {
+          this.el.addEventListener(event.on, event.call);
         }
       } else {
-        throw new Error('[OSF] Cannot initialize event handlers on non-existing Element');
+        throw new Error('[OSF] Cannot initialize DOM event handlers on non-existing Element');
       }
     });
   }

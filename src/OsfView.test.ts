@@ -66,7 +66,7 @@ test('OsfView calls beforeInit/afterInits only once', async () => {
   expect(afterInit.callCount).toBe(1);
 });
 
-test('OsfView handles domEvents', async () => {
+test('OsfView handles domEvents on child elements', async () => {
   const callback = sinon.fake();
   class TestView extends OsfView {
     getHTML(): string {
@@ -84,6 +84,34 @@ test('OsfView handles domEvents', async () => {
     ];
 
     handleParagraphClick() {
+      callback();
+    }
+  }
+  const view = new TestView();
+  await view.init();
+  const el = view.el?.querySelector('p');
+  if (el) {
+    el.click();
+  }
+  expect(callback.callCount).toBe(1);
+});
+
+test('OsfView handles domEvents on root element', async () => {
+  const callback = sinon.fake();
+  class TestView extends OsfView {
+    getHTML(): string {
+      return `
+        <div>
+          <p>Hello</p>
+        </div>
+      `;
+    }
+    domEvents = [
+      {
+        on: 'click', call: this.handleClick.bind(this),
+      },
+    ];
+    handleClick() {
       callback();
     }
   }

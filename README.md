@@ -463,6 +463,7 @@ class HeaderView extends OsfView {
   }
   domEvents = [
     {
+      // omit "el" to add event handler to the root element
       el: '.btn-logout',
       on: 'click',
       call: this.handleLogout.bind(this),
