@@ -356,7 +356,20 @@ There is also a special method that simplifies the case when
 observable object needs to retrigger an event from other observable:
 
 ```typescript
+// in a method of custom observable class
 somethingObservable.on(ALL_EVENTS, this.retrigger.bind(this));
+```
+
+Retriggering is often happens in `OsfCollectionView` (described below)
+to pass events from child Views to proper handler in a parent:
+
+```typescript
+class ExampleCollectionView extends OsfCollectionView {
+  // ...
+  viewEvents = [
+    { on: ALL_EVENTS, call: this.retrigger.bind(this) },
+  ];
+}
 ```
 
 ### Renderable
