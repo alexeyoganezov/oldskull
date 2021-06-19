@@ -182,29 +182,29 @@ await taskListView.init();
 import { OsfPresenter } from 'oldskull';
 
 class TaskPresenter extends OsfPresenter<TaskModel, TaskView> {
-    model = new TaskModel();
-    view = new TaskView(this.model);
-    viewEvents = [
-      {
-        on: 'completed',
-        call: this.handleViewCompleted.bind(this),
-      },
-    ];
-    modelEvents = [
-      {
-        on: 'change isCompleted',
-        call: this.handleModelStatusChange.bind(this),
-      },
-    ];
-    async beforeInit() {
-      // Model initialization here
-    }
-    handleViewCompleted() {
-      // Update a value in Model
-    }
-    handleModelStatusChange() {
-      // Call a View method that updates displayed status
-    }
+  model = new TaskModel();
+  view = new TaskView(this.model);
+  viewEvents = [
+    {
+      on: 'completed',
+      call: this.handleViewCompleted.bind(this),
+    },
+  ];
+  modelEvents = [
+    {
+      on: 'change isCompleted',
+      call: this.handleModelStatusChange.bind(this),
+    },
+  ];
+  async beforeInit() {
+    // Model initialization here
+  }
+  handleViewCompleted() {
+    // Update a value in Model
+  }
+  handleModelStatusChange() {
+    // Call a View method that updates displayed status
+  }
 }
 
 const taskPresenter = new TaskPresenter();
@@ -752,13 +752,13 @@ class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
       on: MODEL_ADDED_EVENT,
       call: this.addChildView.bind(this),
     },
-  ]
+  ];
   viewEvents = [
     {
       on: 'completed',
       call: this.handleViewCompleted.bind(this),
     },
-  ]
+  ];
   handleViewCompleted() {
     // ...
   }
