@@ -80,6 +80,28 @@ test('OsfCollectionView renders emptyView if no model presented', async () => {
   expect(view.el && view.el.children[0].textContent).toBe('No articles');
 });
 
+test('OsfCollectionView removes EmptyView on ChildView adding', async () => {
+  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
+    getHTML(): string {
+      return '<div class="articles"></div>';
+    }
+  }
+  const collection = new OsfCollection<ArticleModel>();
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView([
+    new ArticleModel({ title: 'one', description: 'two' }),
+    new ArticleModel({ title: 'three', description: 'four' })
+  ]);
+  // Check children count
+  expect(view.el && view.el.children.length).toBe(2);
+  // Check first rendered View
+  expect(view.el?.children[0].children[0].tagName).toBe('H1');
+  expect(view.el?.children[0].children[0].textContent).toBe('one');
+  expect(view.el?.children[0].children[1].tagName).toBe('P');
+  expect(view.el?.children[0].children[1].textContent).toBe('two');
+});
+
 test('OsfCollectionView can perform sorting', async () => {
   class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
     getHTML(): string {

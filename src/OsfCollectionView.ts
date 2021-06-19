@@ -42,6 +42,12 @@ export abstract class OsfCollectionView<
   protected readonly EmptyView?: { new(): EV };
 
   /**
+   * An instance of currently rendered EmptyView.
+   * Can be used as a flag indicating whether EmptyView is displayed at the moment.
+   */
+  protected displayedEmptyView: EV | null = null;
+
+  /**
    * Rendered ModelViews.
    */
   protected children: CV[] = [];
@@ -117,11 +123,7 @@ export abstract class OsfCollectionView<
     }
     // Initialize children
     if (modelsToRender.length === 0 && this.EmptyView) {
-      const view = new this.EmptyView();
-      await view.init();
-      if (this.el && view.el) {
-        this.el.append(view.el);
-      }
+      await this.showEmptyView();
     } else {
       await this.addChildView(modelsToRender);
     }
@@ -132,11 +134,36 @@ export abstract class OsfCollectionView<
   }
 
   /**
+   * Render EmptyView.
+   */
+  protected async showEmptyView() {
+    if (!this.EmptyView) return;
+    const view = new this.EmptyView();
+    await view.init();
+    const container = this.childViewContainer ? this.childViewContainer.get() : this.el;
+    if (view.el && container) {
+      container.append(view.el);
+      this.displayedEmptyView = view;
+    }
+  }
+
+  /**
+   * Remove displayed EmptyView.
+   */
+  protected async hideEmptyView() {
+    this.displayedEmptyView?.remove();
+    this.displayedEmptyView = null;
+  }
+
+  /**
    * Create and append one or several ModelViews.
    *
    * @param models - Model(s) to render
    */
   public async addChildView(models: M | M[]): Promise<void> {
+    if (this.displayedEmptyView) {
+      this.hideEmptyView();
+    }
     if (Array.isArray(models)) {
       const offset = this.children.length;
       const promises = models.map(async (model) => {
