@@ -717,30 +717,42 @@ const taskModel =
 inside of it renders Models from a Collection using provided
 `OsfModelView`.
 
-If a Collection has no Models then other View called
-"EmptyView" can rendered instead.
-
 Default container element is `<div></div>` but you can change it by
 overwriting `getHTML()` method:
 
 ```typescript
 import { OsfCollectionView } from 'oldskull';
 
-class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
+class TaskListView extends OsfCollectionView<TaskModel, TaskView> {
   constructor(collection: OsfCollection<TaskModel>) {
-    super(collection, TaskView, NoTasksView);
+    super(collection, TaskView);
   }
   getHTML(): string {
     return '<div class="tasks"></div>';
   }
 }
 
-class NoTasksView extends OsfView {
-  // ...
-}
-
 const taskListView = new TaskListView(tasks);
 await taskListView.init();
+```
+
+If a Collection has no Models then other View called
+"EmptyView" can rendered instead:
+
+```typescript
+import { OsfCollectionView } from 'oldskull';
+
+class NoTasksView extends OsfView {
+  getHTML(): string {
+    return '<p>No tasks</p>';
+  }
+}
+
+class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
+  constructor(collection: OsfCollection<TaskModel>) {
+    super(collection, TaskView, NoTasksView);
+  }
+}
 ```
 
 CollectionView can listen to events from a Collection and child Views:

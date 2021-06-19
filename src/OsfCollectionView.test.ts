@@ -202,6 +202,18 @@ test('OsfCollectionView handles viewEvents', async () => {
   expect(callback.callCount).toBe(1);
 });
 
+test('OsfCollectionView can be used without EmptyView', async () => {
+  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView> {
+    getHTML(): string {
+      return '<div class="articles"></div>';
+    }
+  }
+  const collection = new OsfCollection<ArticleModel>([]);
+  const view = new ArticlesView(collection, ArticleView);
+  await view.init();
+  expect(view.el?.children.length).toBe(0);
+});
+
 test.todo('OsfCollectionView can add ModelView');
 
 test.todo('OsfCollectionView can remove ModelView');

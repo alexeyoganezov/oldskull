@@ -23,7 +23,7 @@ export interface IOsfCollectionView<M extends IOsfModel<object>> extends IOsfVie
 export abstract class OsfCollectionView<
     M extends IOsfModel<object>,
     CV extends IOsfModelView<M>,
-    EV extends IOsfView,
+    EV extends IOsfView = OsfView,
   > extends OsfView implements IOsfCollectionView<M> {
   /**
    * A Collection with Models to render.
