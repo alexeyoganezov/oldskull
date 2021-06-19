@@ -168,6 +168,7 @@ export class OsfCollectionView<
       const offset = this.children.length;
       const promises = models.map(async (model) => {
         const view = new this.ChildView(model);
+        await view.handleBeforeInit();
         this.children.push(view);
         return view.getHTML();
       });
@@ -181,6 +182,7 @@ export class OsfCollectionView<
           for (let i = offset; i < lastChildIndex; i += 1) {
             const childView = this.children[i];
             childView.mountTo(this.el.children[i]);
+            childView.handleAfterInit();
             this.subscribeToView(childView);
           }
         } else {

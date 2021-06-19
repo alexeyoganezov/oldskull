@@ -4,6 +4,8 @@ export interface IOsfRenderable extends IOsfObservable {
   el?: Element
   init(): void
   remove(): void
+  handleBeforeInit(): Promise<void>
+  handleAfterInit(): Promise<void>
 }
 
 /**
@@ -36,7 +38,7 @@ export abstract class OsfRenderable extends OsfObservable implements IOsfRendera
   /**
    * Process this.beforeInit() call.
    */
-  protected async handleBeforeInit(): Promise<void> {
+  public async handleBeforeInit(): Promise<void> {
     if (!this.wasBeforeInitCalled) {
       await this.beforeInit();
       this.wasBeforeInitCalled = true;
@@ -59,7 +61,7 @@ export abstract class OsfRenderable extends OsfObservable implements IOsfRendera
   /**
    * Process this.afterInit() call.
    */
-  protected async handleAfterInit(): Promise<void> {
+  public async handleAfterInit(): Promise<void> {
     if (!this.wasAfterInitCalled) {
       await this.afterInit();
       this.wasAfterInitCalled = true;

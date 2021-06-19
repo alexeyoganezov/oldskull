@@ -218,6 +218,40 @@ test('OsfCollectionView calls beforeInit/afterInit', async () => {
   expect(afterInit.callCount).toBe(1);
 });
 
+test('OsfCollectionView calls beforeInit/afterInit on child Views', async () => {
+  const beforeInit = sinon.fake();
+  const afterInit = sinon.fake();
+  class ArticleView extends OsfModelView<ArticleModel> {
+    getHTML(): string {
+      const preview = this.model.attrs;
+      return `
+        <div>
+          <h1>${preview.title}</h1>
+        </div>
+      `;
+    }
+    beforeInit(): void {
+      beforeInit();
+    }
+    afterInit(): void {
+      afterInit();
+    }
+  }
+  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
+    getHTML(): string {
+      return '<div class="articles"></div>';
+    }
+  }
+  const collection = new OsfCollection<ArticleModel>();
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView([
+    new ArticleModel({ title: 'One', description: 'Hello' }),
+  ]);
+  expect(beforeInit.callCount).toBe(1);
+  expect(afterInit.callCount).toBe(1);
+});
+
 test('OsfCollectionView handles viewEvents', async () => {
   const callback = sinon.fake();
   class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
