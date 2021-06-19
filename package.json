@@ -1,13 +1,13 @@
 {
   "name": "oldskull",
   "version": "1.0.0",
-  "description": "",
+  "description": "Front-end framework powered by TS, OOP and MVC",
   "main": "dist/index.js",
   "scripts": {
     "build": "rollup -c --environment BUILD:production",
     "test": "jest ./src/"
   },
-  "repository": "git@github.com:alexeyoganezov/oldscull.git",
+  "repository": "git@github.com:alexeyoganezov/oldskull.git",
   "author": "Alexey Oganezov <alexey@oganezov.work>",
   "license": "MIT",
   "devDependencies": {
