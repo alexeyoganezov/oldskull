@@ -83,6 +83,14 @@ export abstract class OsfCollectionView<
   }
 
   /**
+   * Get default markup for container element.
+   * Overwrite it in child classes when it doesn't suit your needs.
+   */
+  getHTML(): string {
+    return '<div></div>';
+  }
+
+  /**
    * Create container element and render Collection inside.
    *
    * @return HTML of created DOM subtree

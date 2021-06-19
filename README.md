@@ -702,8 +702,13 @@ const taskModel =
 
 `OsfCollectionView` class is a View that creates a container Element and
 inside of it renders Models from a Collection using provided
-`OsfModelView`. If a Collection has no Models then other View called
-"EmptyView" is rendered instead.
+`OsfModelView`.
+
+If a Collection has no Models then other View called
+"EmptyView" can rendered instead.
+
+Default container element is `<div></div>` but you can change it by
+overwriting `getHTML()` method:
 
 ```typescript
 import { OsfCollectionView } from 'oldskull';
