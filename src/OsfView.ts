@@ -9,18 +9,19 @@ export interface IOsfDomEventListener {
   call: EventListenerOrEventListenerObject
 }
 
-export interface IOsfView extends IOsfRenderable {
-  el?: Element;
+export interface IOsfView<E extends Element = Element> extends IOsfRenderable<E> {
   init(): Promise<string>
   remove(): void
-  mountTo(el: Element): void
+  mountTo(el: E): void
   getHTML(): string
 }
 
 /**
  * Creates and manages a subtree of HTML elements.
  */
-export abstract class OsfView extends OsfRenderable implements IOsfView {
+export abstract class OsfView<
+  E extends Element = Element,
+> extends OsfRenderable<E> implements IOsfView<E> {
   /**
    * A list of DOM events and their handlers.
    */
@@ -57,7 +58,7 @@ export abstract class OsfView extends OsfRenderable implements IOsfView {
     const container = document.createElement('template');
     container.innerHTML = html;
     if (container.content.firstChild) {
-      this.el = container.content.children[0];
+      this.el = container.content.children[0] as E;
     }
   }
 
@@ -106,7 +107,7 @@ export abstract class OsfView extends OsfRenderable implements IOsfView {
    *
    * @param el - HTML Element to bind to
    */
-  public mountTo(el: Element): void {
+  public mountTo(el: E): void {
     this.el = el;
     this.handleMount();
   }

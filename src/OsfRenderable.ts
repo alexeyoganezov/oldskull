@@ -1,7 +1,7 @@
 import { OsfObservable, IOsfObservable } from './internal';
 
-export interface IOsfRenderable extends IOsfObservable {
-  el?: Element
+export interface IOsfRenderable<E extends Element = Element> extends IOsfObservable {
+  el?: E
   init(): void
   remove(): void
   handleBeforeInit(): Promise<void>
@@ -11,11 +11,13 @@ export interface IOsfRenderable extends IOsfObservable {
 /**
  * An entity that creates or uses DOM element and has create/remove logic with lifecycle methods.
  */
-export abstract class OsfRenderable extends OsfObservable implements IOsfRenderable {
+export abstract class OsfRenderable<
+  E extends Element = Element,
+> extends OsfObservable implements IOsfRenderable<E> {
   /**
    * Root HTML element of a subtree used by the class.
    */
-  public el?: Element;
+  public el?: E;
 
   /**
    * A flag to prevent repetitive this.beforeInit() call

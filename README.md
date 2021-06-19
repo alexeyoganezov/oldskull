@@ -448,6 +448,23 @@ class GreetingView extends OsfView {
 Any view has `init()`/`remove()` methods, `el` property with created
 Element and lifecycle hooks. See `OsfRenderable` class for details.
 
+By default View presumes it renders a general
+[Element](https://developer.mozilla.org/en-US/docs/Web/API/Element)
+but if you render something different you can always specify a subtype
+using generics:
+
+```typescript
+class ExampleInputView extends OsfView<HTMLInputElement> {
+  getHTML(): string {
+    return `<input type="text" value="hello">`;
+  }
+}
+
+const view = new ExampleInputView();
+await view.init();
+view.el?.value === 'hello' // true, no type error
+```
+
 Views can listen to DOM events and handle them:
 
 ```typescript

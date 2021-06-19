@@ -21,6 +21,19 @@ test('OsfView creates HTML subtree from provided template', async () => {
   expect(view.el?.children[0].textContent).toBe('Hello');
 });
 
+test('OsfView can render different Element subtypes', async () => {
+  class TestView extends OsfView<HTMLInputElement> {
+    getHTML(): string {
+      return `<input class="input" type="text" value="hello">`;
+    }
+  }
+  const view = new TestView();
+  await view.init();
+  expect(view.el?.tagName).toBe('INPUT');
+  expect(view.el?.getAttribute('class')).toBe('input');
+  expect(view.el?.value).toBe('hello');
+});
+
 test('OsfView calls beforeInit/afterInits hooks', async () => {
   const beforeInit = sinon.fake();
   const afterInit = sinon.fake();
