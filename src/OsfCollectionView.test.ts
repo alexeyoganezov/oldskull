@@ -67,6 +67,25 @@ test('OsfCollectionView renders all models', async () => {
   expect(view.el?.children[1].children[1].textContent).toBe('World');
 });
 
+test('OsfCollectionView can be used without inheritance', async () => {
+  const collection = new OsfCollection([
+    new ArticleModel({ title: 'One', description: 'Hello' }),
+    new ArticleModel({ title: 'Two', description: 'World' }),
+  ]);
+  const view = new OsfCollectionView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  // First view
+  expect(view.el?.children[0].children[0].tagName).toBe('H1');
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[0].children[1].tagName).toBe('P');
+  expect(view.el?.children[0].children[1].textContent).toBe('Hello');
+  // Second view
+  expect(view.el?.children[1].children[0].tagName).toBe('H1');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[1].children[1].tagName).toBe('P');
+  expect(view.el?.children[1].children[1].textContent).toBe('World');
+});
+
 test('OsfCollectionView renders emptyView if no model presented', async () => {
   class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
     getHTML(): string {

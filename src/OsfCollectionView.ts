@@ -21,7 +21,7 @@ export interface IOsfCollectionView<M extends IOsfModel<object>> extends IOsfVie
 /**
  * Creates a container element and renders Models from a Collection there.
  */
-export abstract class OsfCollectionView<
+export class OsfCollectionView<
     M extends IOsfModel<object>,
     CV extends IOsfModelView<M>,
     EV extends IOsfView = OsfView,

@@ -819,6 +819,14 @@ class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
 }
 ```
 
+Simple CollectionView can be instantiated without definition of child class but
+this approach in general should be avoided because it makes your code
+less maintainable:
+
+```typescript
+const taskListView = new OsfCollectionView(collection, TaskView, NoTasksView);
+```
+
 ### Presenter
 
 `OsfPresenter` class is responsible for creation and initialization of a
