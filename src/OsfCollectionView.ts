@@ -19,6 +19,21 @@ export interface IOsfCollectionView<M extends IOsfModel<object>> extends IOsfVie
 }
 
 /**
+ * Indicates desired position of new ModelViews on adding:
+ *
+ * Beginning - before existing ModelViews
+ * Before - before specific ModelView
+ * After - after specific ModelView
+ * End - after existing ModelViews
+ */
+export enum OsfInsertPosition {
+  Beginning,
+  Before,
+  After,
+  End,
+}
+
+/**
  * Creates a container element and renders Models from a Collection there.
  */
 export class OsfCollectionView<
@@ -48,7 +63,7 @@ export class OsfCollectionView<
   protected displayedEmptyView: EV | null = null;
 
   /**
-   * Rendered ModelViews.
+   * Unordered list of rendered ModelViews.
    */
   protected children: CV[] = [];
 
@@ -158,32 +173,92 @@ export class OsfCollectionView<
   /**
    * Create and append one or several ModelViews.
    *
-   * @param models - Model(s) to render
+   * @param models - Model or models to render
+   * @param position - Desired position of new ModelView
+   * @param targetModel - Model for Before/After positioning
+   *
+   * @todo Get rid of code duplications
+   * @todo Change order of if/else conditions (often used first, rarely used last)
+   * @todo Remove unnecessary nesting that occurred because of error checks
+   * @todo Move error messages to some external place
    */
-  public async addChildView(models: M | M[]): Promise<void> {
+  public async addChildView(
+    models: M | M[],
+    position: OsfInsertPosition = OsfInsertPosition.End,
+    targetModel?: M,
+  ): Promise<void> {
     if (this.displayedEmptyView) {
       this.hideEmptyView();
     }
+    // If we're dealing with an array of Models
+    // then insert the markup of all new ModelViews using single DOM operation
+    // and then bind created DOM Elements with ModelViews instances
     if (Array.isArray(models)) {
-      const offset = this.children.length;
+      const oldChildrenLength = this.children.length;
       const promises = models.map(async (model) => {
         const view = new this.ChildView(model);
-        await view.handleBeforeInit();
         this.children.push(view);
+        await view.handleBeforeInit();
         return view.getHTML();
       });
+      const newChildrenLength = this.children.length;
       const htmls = await Promise.all(promises);
       const html = htmls.join('');
       if (this.el) {
         const container = this.childViewContainer ? this.childViewContainer.get() : this.el;
         if (container) {
-          container.insertAdjacentHTML('beforeend', html);
-          const lastChildIndex = this.children.length;
-          for (let i = offset; i < lastChildIndex; i += 1) {
-            const childView = this.children[i];
-            childView.mountTo(this.el.children[i]);
-            childView.handleAfterInit();
-            this.subscribeToView(childView);
+          if (position === OsfInsertPosition.Beginning) {
+            container.insertAdjacentHTML('afterbegin', html);
+            let counter = 0;
+            for (let i = oldChildrenLength; i < newChildrenLength; i += 1) {
+              const childView = this.children[i];
+              childView.mountTo(this.el.children[counter]);
+              counter += 1;
+              this.subscribeToView(childView);
+              childView.handleAfterInit();
+            }
+          } else if (position === OsfInsertPosition.End) {
+            container.insertAdjacentHTML('beforeend', html);
+            for (let i = oldChildrenLength; i < newChildrenLength; i += 1) {
+              const childView = this.children[i];
+              childView.mountTo(this.el.children[i]);
+              this.subscribeToView(childView);
+              childView.handleAfterInit();
+            }
+          } else if (position === OsfInsertPosition.Before) {
+            if (!targetModel) throw new Error('[OSF] Parameter "targetModel" is not provided');
+            const targetView = this.children.find((view: CV) => view.model === targetModel);
+            if (!targetView || !targetView.el) throw new Error('[OSF] targetView not found or is not initialized');
+            targetView.el.insertAdjacentHTML('beforebegin', html);
+            let el = targetView.el.previousElementSibling;
+            for (let i = oldChildrenLength; i < newChildrenLength; i += 1) {
+              const childView = this.children[i];
+              if (el) {
+                childView.mountTo(el);
+                this.subscribeToView(childView);
+                childView.handleAfterInit();
+                el = el.previousElementSibling;
+              } else {
+                throw new Error('[OSF] An Element for binding with a View does not found');
+              }
+            }
+          } else if (position === OsfInsertPosition.After) {
+            if (!targetModel) throw new Error('[OSF] Parameter "targetModel" is not provided');
+            const targetView = this.children.find((view: CV) => view.model === targetModel);
+            if (!targetView || !targetView.el) throw new Error('[OSF] targetView not found or is not initialized');
+            targetView.el.insertAdjacentHTML('afterend', html);
+            let el = targetView.el.nextElementSibling;
+            for (let i = oldChildrenLength; i < newChildrenLength; i += 1) {
+              const childView = this.children[i];
+              if (el) {
+                childView.mountTo(el);
+                this.subscribeToView(childView);
+                childView.handleAfterInit();
+                el = el.nextElementSibling;
+              } else {
+                throw new Error('[OSF] An Element for binding with a View does not found');
+              }
+            }
           }
         } else {
           throw new Error('[OSF] Container element was not found');
@@ -192,13 +267,30 @@ export class OsfCollectionView<
         throw new Error('[OSF] Cannot add child view without this.el set');
       }
     } else {
+      // If we're dealing with a single Model
+      // then create and insert a ModelViews in a usual way
+      // without minimization of DOM operations
       const view = new this.ChildView(models);
       this.subscribeToView(view);
       await view.init();
       this.children.push(view);
       const container = this.childViewContainer ? this.childViewContainer.get() : this.el;
       if (container && view.el) {
-        container.append(view.el);
+        if (position === OsfInsertPosition.Beginning) {
+          container.prepend(view.el);
+        } else if (position === OsfInsertPosition.End) {
+          container.append(view.el);
+        } else if (position === OsfInsertPosition.Before) {
+          if (!targetModel) throw new Error('[OSF] Parameter "targetModel" is not provided');
+          const targetView = this.children.find((v: CV) => v.model === targetModel);
+          if (!targetView || !targetView.el) throw new Error('[OSF] targetView not found or is not initialized');
+          container.insertBefore(view.el, targetView.el);
+        } else if (position === OsfInsertPosition.After) {
+          if (!targetModel) throw new Error('[OSF] Parameter "targetModel" is not provided');
+          const targetView = this.children.find((v: CV) => v.model === targetModel);
+          if (!targetView || !targetView.el) throw new Error('[OSF] targetView not found or is not initialized');
+          container.insertBefore(view.el, targetView.el.nextElementSibling);
+        }
       }
     }
   }

@@ -255,6 +255,7 @@ import {
   OsfApplication,
   OsfRegion,
   OsfReference,
+  OsfInsertPosition,
   ALL_EVENTS,
   MODEL_CHANGED_EVENT,
   MODEL_ADDED_EVENT,
@@ -282,6 +283,7 @@ export {
   OsfApplication as Application,
   OsfRegion as Region,
   OsfReference as Reference,
+  OsfInsertPosition as InsertPosition,
   ALL_EVENTS,
   MODEL_CHANGED_EVENT,
   MODEL_ADDED_EVENT,
@@ -755,7 +757,7 @@ await taskListView.init();
 ```
 
 If a Collection has no Models then other View called
-"EmptyView" can rendered instead:
+"EmptyView" can be rendered instead:
 
 ```typescript
 import { OsfCollectionView } from 'oldskull';
@@ -774,7 +776,7 @@ class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
 ```
 
 ModelViews can be rendered inside of specified child element instead of
-root element by using `OsfReference`:
+root element by defining `childViewContainer` property with an `OsfReference`:
 
 ```typescript
 class TaskListView extends OsfCollectionView<TaskModel, TaskView> {
@@ -817,6 +819,16 @@ class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
 }
 ```
 
+Set `filterFunc` and `sortFunc` properties on a CollectionView to filter
+and sort models before initial rendering:
+
+```typescript
+class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
+  filterFunc = (models) => models.filter((m) => m.attrs.name !== '');
+  sortFunc = (models) => models.reverse();
+}
+```
+
 There are three methods for managing Views inside a CollectionView:
 
 - `addChildView(modelOrArrayOfModels)` adds a ModelView that renders provided Model(s)
@@ -826,14 +838,23 @@ with specified id
 
 - `removeAllChildViews()` removes all rendered ModelViews
 
-Set `filterFunc` and `sortFunc` properties on a CollectionView to filter
-and sort models before rendering:
+You can specify a position where you want to append new ModelView using
+optional parameters of `addChildView` method:
 
 ```typescript
-class TaskListView extends OsfCollectionView<TaskModel, TaskView, NoTasksView> {
-  filterFunc = (models) => models.filter((m) => m.attrs.name !== '');
-  sortFunc = (models) => models.reverse();
-}
+import { OsfInsertPosition } from 'oldskull';
+
+// Insert at the beginning of a list
+await view.addChildView(modelTwo, OsfInsertPosition.Beginning);
+
+// Insert at the begging
+await view.addChildView(modelOne, OsfInsertPosition.Before, modelTwo);
+
+// Insert at the begging
+await view.addChildView(modelThree, OsfInsertPosition.After, modelTwo);
+
+// Insert at the end of a list
+await view.addChildView(modelFour, OsfInsertPosition.End);
 ```
 
 Simple CollectionView can be instantiated without definition of child class but

@@ -10,6 +10,7 @@
 - CollectionView: EmptyView is automatically removed on "addChildView()" calls
 - CollectionView: allowed to be instantiated without inheritance
 - CollectionView: call beforeInit/afterInit on ModelView when several children added
+- CollectionView: allow to specify desired position of ModelViews
 - Documentation: improve example usage of "OsfObservable.retrigger()" method
 - Documentation: added "async" prefix to examples of View method usages
 - Documentation: fixed formatting in various code examples

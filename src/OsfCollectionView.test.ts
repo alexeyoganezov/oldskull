@@ -1,13 +1,14 @@
 import * as sinon from 'sinon';
 
 import {
-  OsfCollectionView,
-  OsfModelView,
-  OsfModel,
-  OsfView,
-  OsfCollection,
-  OsfReference,
   MODEL_ADDED_EVENT,
+  OsfCollection,
+  OsfCollectionView,
+  OsfInsertPosition,
+  OsfModel,
+  OsfModelView,
+  OsfReference,
+  OsfView,
 } from './index';
 
 interface IArticle {
@@ -43,12 +44,13 @@ class NoArticlesView extends OsfView {
   }
 }
 
-test('OsfCollectionView renders all models', async () => {
-  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
-    getHTML(): string {
-      return '<div class="articles"></div>';
-    }
+class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
+  getHTML(): string {
+    return '<div class="articles"></div>';
   }
+}
+
+test('OsfCollectionView renders all models', async () => {
   const collection = new OsfCollection([
     new ArticleModel({ title: 'One', description: 'Hello' }),
     new ArticleModel({ title: 'Two', description: 'World' }),
@@ -87,11 +89,6 @@ test('OsfCollectionView can be used without inheritance', async () => {
 });
 
 test('OsfCollectionView renders emptyView if no model presented', async () => {
-  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
-    getHTML(): string {
-      return '<div class="articles"></div>';
-    }
-  }
   const collection = new OsfCollection<ArticleModel>();
   const view = new ArticlesView(collection, ArticleView, NoArticlesView);
   await view.init();
@@ -100,11 +97,6 @@ test('OsfCollectionView renders emptyView if no model presented', async () => {
 });
 
 test('OsfCollectionView removes EmptyView on ChildView adding', async () => {
-  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
-    getHTML(): string {
-      return '<div class="articles"></div>';
-    }
-  }
   const collection = new OsfCollection<ArticleModel>();
   const view = new ArticlesView(collection, ArticleView, NoArticlesView);
   await view.init();
@@ -147,11 +139,6 @@ test('OsfCollectionView can perform sorting', async () => {
 });
 
 test('OsfCollectionView can perform filtering', async () => {
-  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
-    getHTML(): string {
-      return '<div class="articles"></div>';
-    }
-  }
   const collection = new OsfCollection([
     new ArticleModel({ title: 'aaa', description: 'aaa' }),
     new ArticleModel({ title: 'bbb', description: 'bbb' }),
@@ -172,11 +159,9 @@ test('OsfCollectionView handles collectionEvents', async () => {
     getHTML(): string {
       return '<div class="articles"></div>';
     }
-
     collectionEvents = [
       { on: MODEL_ADDED_EVENT, call: this.handleAdd },
     ];
-
     handleAdd() {
       callback();
     }
@@ -200,11 +185,9 @@ test('OsfCollectionView calls beforeInit/afterInit', async () => {
     getHTML(): string {
       return '<div class="articles"></div>';
     }
-
     beforeInit(): void {
       beforeInit();
     }
-
     afterInit(): void {
       afterInit();
     }
@@ -258,11 +241,9 @@ test('OsfCollectionView handles viewEvents', async () => {
     getHTML(): string {
       return '<div class="articles"></div>';
     }
-
     viewEvents = [
       { on: 'test', call: this.handleTest },
     ];
-
     handleTest() {
       callback();
     }
@@ -319,6 +300,107 @@ test('OsfCollectionView can render View inside of child Element', async () => {
   expect(view.el?.children[1].children[1].children[0].textContent).toBe('Two');
   expect(view.el?.children[1].children[1].children[1].tagName).toBe('P');
   expect(view.el?.children[1].children[1].children[1].textContent).toBe('World');
+});
+
+test('OsfCollectionView can add a ModelView to the beginning', async () => {
+  const collection = new OsfCollection([
+    new ArticleModel({ title: 'Two', description: 'World' }),
+  ]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView(new ArticleModel({ title: 'One', description: 'Hello' }), OsfInsertPosition.Beginning);
+  // First view
+  expect(view.el?.children[0].children[0].tagName).toBe('H1');
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[0].children[1].tagName).toBe('P');
+  expect(view.el?.children[0].children[1].textContent).toBe('Hello');
+  // Second view
+  expect(view.el?.children[1].children[0].tagName).toBe('H1');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[1].children[1].tagName).toBe('P');
+  expect(view.el?.children[1].children[1].textContent).toBe('World');
+});
+
+test('OsfCollectionView can add ModelViews to the beginning', async () => {
+  class ArticlesView extends OsfCollectionView<ArticleModel, ArticleView, NoArticlesView> {
+    getHTML(): string {
+      return '<div class="articles"></div>';
+    }
+  }
+  const collection = new OsfCollection([
+    new ArticleModel({ title: 'Two', description: 'World' }),
+  ]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView([
+    new ArticleModel({ title: 'One', description: 'Hello' }),
+  ], OsfInsertPosition.Beginning);
+  // First view
+  expect(view.el?.children[0].children[0].tagName).toBe('H1');
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[0].children[1].tagName).toBe('P');
+  expect(view.el?.children[0].children[1].textContent).toBe('Hello');
+  // Second view
+  expect(view.el?.children[1].children[0].tagName).toBe('H1');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[1].children[1].tagName).toBe('P');
+  expect(view.el?.children[1].children[1].textContent).toBe('World');
+});
+
+test('OsfCollectionView can add a ModelView right before another one', async () => {
+  const modelOne = new ArticleModel({ title: 'One', description: '1' });
+  const modelTwo = new ArticleModel({ title: 'Two', description: '2' });
+  const modelThree = new ArticleModel({ title: 'Three', description: '3' });
+  const collection = new OsfCollection([modelOne, modelThree]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView(modelTwo, OsfInsertPosition.Before, modelThree);
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[2].children[0].textContent).toBe('Three');
+});
+
+test('OsfCollectionView can add ModelViews right before another one', async () => {
+  const modelOne = new ArticleModel({ title: 'One', description: '1' });
+  const modelTwo = new ArticleModel({ title: 'Two', description: '2' });
+  const modelThree = new ArticleModel({ title: 'Three', description: '3' });
+  const modelFour = new ArticleModel({ title: 'Four', description: '4' });
+  const collection = new OsfCollection([modelOne, modelFour]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView([modelTwo, modelThree], OsfInsertPosition.Before, modelFour);
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[2].children[0].textContent).toBe('Three');
+  expect(view.el?.children[3].children[0].textContent).toBe('Four');
+});
+
+test('OsfCollectionView can add a ModelView right after another one', async () => {
+  const modelOne = new ArticleModel({ title: 'One', description: '1' });
+  const modelTwo = new ArticleModel({ title: 'Two', description: '2' });
+  const modelThree = new ArticleModel({ title: 'Three', description: '3' });
+  const collection = new OsfCollection([modelOne, modelThree]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView(modelTwo, OsfInsertPosition.After, modelOne);
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[2].children[0].textContent).toBe('Three');
+});
+
+test('OsfCollectionView can add ModelViews right after another one', async () => {
+  const modelOne = new ArticleModel({ title: 'One', description: '1' });
+  const modelTwo = new ArticleModel({ title: 'Two', description: '2' });
+  const modelThree = new ArticleModel({ title: 'Three', description: '3' });
+  const modelFour = new ArticleModel({ title: 'Four', description: '4' });
+  const collection = new OsfCollection([modelOne, modelFour]);
+  const view = new ArticlesView(collection, ArticleView, NoArticlesView);
+  await view.init();
+  await view.addChildView([modelTwo, modelThree], OsfInsertPosition.After, modelOne);
+  expect(view.el?.children[0].children[0].textContent).toBe('One');
+  expect(view.el?.children[1].children[0].textContent).toBe('Two');
+  expect(view.el?.children[2].children[0].textContent).toBe('Three');
+  expect(view.el?.children[3].children[0].textContent).toBe('Four');
 });
 
 test.todo('OsfCollectionView can add ModelView');
