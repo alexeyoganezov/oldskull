@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.0
 
 - View: allowed to specify type of rendered Element
 - View: allowed to set DOM event handlers on a root element

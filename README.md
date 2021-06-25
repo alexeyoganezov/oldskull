@@ -2,7 +2,7 @@
 
 New front-end framework for old software developers. 🧙‍♂️
 
-Features:
+**Features:**
 
 - Written in TypeScript (strict mode) using OOP
 - Implements Model-View-Presenter architecture
@@ -36,20 +36,29 @@ Features:
 
 ## Motivation
 
-Development of web-interfaces should be simple and accessible to
-any kind of developers.
-It's not rocket science, it's just lists and forms implemented by
-platform widgets.
+Modern front-end frameworks have a tendency to isolate developers from
+native platform and impose its own unique way of UI development
+that completely locks people in their isolated ecosystems.
 
-Somehow modern front-end frameworks don't offer that. Instead they:
+For example they:
 
-- Impose [new syntax](https://reactjs.org/docs/introducing-jsx.html) not compatible with language specification
+- Provide [new syntax](https://reactjs.org/docs/introducing-jsx.html) not compatible with language specification
 
 - Hide high-level platform abstraction with [even more high-level abstraction](https://reactjs.org/docs/faq-internals.html)
 
 - Replace successful well-known paradigms with [weird and unobvious one](https://reactjs.org/docs/hooks-intro.html)
 
-I think all of that is unnecessary and "Old Skull Framework" is developed to prove it.
+As a result we have to deal with fat and slow SPA developed by people who don't know
+how their [application platform](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
+works and who aren't exposed to common computer science knowledge.
+
+Old Skull Framework is developed in a different way, it:
+
+- Hides nothing from a developer
+
+- Uses well-known terms, design patterns and paradigms
+
+- Open for learning, changing and extension
 
 ## Overview
 
