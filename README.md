@@ -46,7 +46,7 @@ For example they:
 
 - Hide high-level platform abstraction with [even more high-level abstraction](https://reactjs.org/docs/faq-internals.html)
 
-- Replace successful well-known paradigms with [weird and unobvious one](https://reactjs.org/docs/hooks-intro.html)
+- Replace successful well-known paradigms with [weird and unobvious ones](https://reactjs.org/docs/hooks-intro.html)
 
 As a result front-end developers often don't know how their 
 [application platform](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
