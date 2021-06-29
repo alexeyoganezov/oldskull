@@ -48,9 +48,9 @@ For example they:
 
 - Replace successful well-known paradigms with [weird and unobvious one](https://reactjs.org/docs/hooks-intro.html)
 
-As a result we have to deal with fat and slow SPA developed by people who don't know
-how their [application platform](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
-works and who aren't exposed to common computer science knowledge.
+As a result front-end developers often don't know how their 
+[application platform](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)
+works and have vast gaps in computer science knowledge.
 
 Old Skull Framework is developed in a different way, it:
 
